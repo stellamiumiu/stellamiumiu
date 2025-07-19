@@ -1,3 +1,4 @@
 - 👋 Hi, I’m @stellamiumiu
-- 👀 I’m interested in python coding, drawing, and cats
-- 🌱 I’m currently learning python coding
+- 👀 I’m interested in coding, swimming, and cats
+- 🌱 I’m currently learning py, c, js, html, and css (iykyk, and i know u know)
+- 😭 Sadly don't have all the time in the world
