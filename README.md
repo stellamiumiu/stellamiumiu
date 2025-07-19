@@ -1,4 +1,4 @@
 - 👋 Hi, I’m @stellamiumiu
 - 👀 I’m interested in coding, swimming, and cats
-- 🌱 I’m currently learning py, c, js, html, and css (iykyk, and i know u know)
+- 🌱 I’m currently learning py, c, js, html, and css (just basics tho)
 - 😭 Sadly don't have all the time in the world
