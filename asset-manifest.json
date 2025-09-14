@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/stellamiumiu/static/css/main.2fa486f3.css",
+    "main.js": "/stellamiumiu/static/js/main.40ea00d1.js",
+    "static/media/planet_protector.jpeg": "/stellamiumiu/static/media/planet_protector.03b8faafea37298f7ecb.jpeg",
+    "static/media/carbon_compromiser.jpeg": "/stellamiumiu/static/media/carbon_compromiser.57b8fc1ea4d58bfcac2f.jpeg",
+    "static/media/earth_guardian.jpeg": "/stellamiumiu/static/media/earth_guardian.d2ac5e392be200b23b67.jpeg",
+    "static/media/climate_challenger.jpeg": "/stellamiumiu/static/media/climate_challenger.77b8d4fb00cac5bd0233.jpeg",
+    "index.html": "/stellamiumiu/index.html",
+    "main.2fa486f3.css.map": "/stellamiumiu/static/css/main.2fa486f3.css.map",
+    "main.40ea00d1.js.map": "/stellamiumiu/static/js/main.40ea00d1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2fa486f3.css",
+    "static/js/main.40ea00d1.js"
+  ]
+}
