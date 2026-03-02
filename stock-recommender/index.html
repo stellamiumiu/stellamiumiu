@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RETRO STOCK TERMINAL - SMART SEARCH</title>
+    <!-- Pixel font -->
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        /* ==================== RETRO PIXEL THEME ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: 'VT323', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .terminal {
+            width: 1300px;
+            max-width: 100%;
+            background-color: #0a0a0a;
+            border: 6px solid #ffffff;
+            box-shadow: 
+                8px 8px 0 0 #ff69b4,
+                12px 12px 0 0 #000000,
+                16px 16px 0 0 #ff69b4;
+            padding: 20px;
+        }
+
+        .header {
+            border-bottom: 4px solid #ffffff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ff69b4;
+            text-shadow: 
+                4px 4px 0 #ffffff,
+                6px 6px 0 #000000;
+            letter-spacing: 2px;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            color: #ffffff;
+            border: 4px solid #ff69b4;
+            padding: 8px 16px;
+            box-shadow: 2px 2px 0 0 #ff69b4;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            flex-shrink: 0;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar .dashboard-nav button {
+            background-color: hsl(330, 90%, 60%);
+            color: white;
+            border: 4px solid hsl(330, 100%, 75%);
+            box-shadow:
+                2px 2px 0 0 hsl(330, 80%, 55%),
+                4px 4px 0 0 hsl(330, 70%, 45%);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            padding: 15px;
+            border-radius: 0;
+            transition: all 0.1s ease;
+            cursor: pointer;
+            text-align: left;
+            width: 100%;
+        }
+
+        .sidebar .dashboard-nav button:hover:enabled {
+            background-color: hsl(330, 80%, 50%);
+            box-shadow:
+                3px 3px 0 0 hsl(330, 70%, 45%),
+                6px 6px 0 0 hsl(330, 60%, 35%);
+            transform: translate(-1px, -1px);
+        }
+
+        .content {
+            flex: 1;
+            background-color: #000000;
+            border: 4px solid #ffffff;
+            padding: 20px;
+            min-height: 600px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #ff69b4;
+            margin-bottom: 20px;
+            border-bottom: 4px solid #ffffff;
+            padding-bottom: 10px;
+        }
+
+        .section .content-box button {
+            margin-top: 15px;
+            padding: 14px;
+            background-color: hsl(330, 90%, 60%);
+            color: white;
+            border: 4px solid hsl(330, 100%, 75%);
+            box-shadow:
+                2px 2px 0 0 hsl(330, 80%, 55%),
+                4px 4px 0 0 hsl(330, 70%, 45%);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 0;
+            transition: all 0.1s ease;
+            width: auto;
+            min-width: 120px;
+        }
+
+        .section .content-box button:hover {
+            background-color: hsl(330, 80%, 50%);
+            box-shadow:
+                3px 3px 0 0 hsl(330, 70%, 45%),
+                6px 6px 0 0 hsl(330, 60%, 35%);
+            transform: translate(-1px, -1px);
+        }
+
+        .actions button {
+            margin-left: 8px;
+            padding: 8px 12px;
+            border: 4px solid hsl(330, 100%, 75%);
+            box-shadow: 1px 1px 0 0 hsl(330, 90%, 55%);
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'VT323', monospace;
+            color: white;
+            border-radius: 0;
+            background-color: hsl(330, 90%, 60%);
+            transition: all 0.1s ease;
+        }
+
+        .actions button:hover {
+            background-color: hsl(330, 80%, 50%);
+            box-shadow: 3px 3px 0 0 hsl(330, 70%, 45%);
+            transform: translate(-1px, -1px);
+        }
+
+        .trading-style-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .style-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: hsl(330, 90%, 60%);
+            color: white;
+            border: 4px solid hsl(330, 100%, 75%);
+            box-shadow:
+                2px 2px 0 0 hsl(330, 80%, 55%),
+                4px 4px 0 0 hsl(330, 70%, 45%);
+            font-family: 'VT323', monospace;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 0;
+            transition: all 0.1s ease;
+        }
+
+        .style-btn.active {
+            background-color: hsl(330, 70%, 50%);
+            box-shadow:
+                3px 3px 0 0 hsl(330, 60%, 45%),
+                6px 6px 0 0 hsl(330, 50%, 35%);
+            transform: translate(-1px, -1px);
+        }
+
+        .style-btn:hover {
+            background-color: hsl(330, 80%, 50%);
+            transform: translate(-1px, -1px);
+        }
+
+        .timeframe-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timeframe-btn {
+            padding: 8px 16px;
+            background-color: #000000;
+            border: 4px solid #ffffff;
+            color: #ffffff;
+            font-family: 'VT323', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .timeframe-btn.active {
+            background-color: #ff69b4;
+            border-color: #ff69b4;
+            color: #000000;
+        }
+
+        .timeframe-btn:hover {
+            border-color: #ff69b4;
+        }
+
+        .pixel-input {
+            background-color: #000000;
+            border: 4px solid #ffffff;
+            color: #ff69b4;
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .pixel-input:focus {
+            outline: none;
+            border-color: #ff69b4;
+            box-shadow: 2px 2px 0 0 #ff69b4;
+        }
+
+        /* Search Results Grid */
+        .search-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 4px solid #ffffff;
+        }
+
+        .search-result-item {
+            padding: 10px;
+            border: 2px solid #ff69b4;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-align: center;
+        }
+
+        .search-result-item:hover {
+            background-color: #ff69b4;
+            color: #000000;
+            transform: scale(1.02);
+        }
+
+        .search-result-ticker {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .search-result-name {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .search-result-item:hover .search-result-name {
+            color: #000000;
+        }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stock-card {
+            border: 4px solid #ffffff;
+            padding: 15px;
+            background-color: #0a0a0a;
+            box-shadow: 4px 4px 0 0 #ff69b4;
+        }
+
+        .stock-ticker {
+            font-size: 1.8rem;
+            color: #ff69b4;
+            border-bottom: 2px solid #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-price {
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+        .stock-change.positive {
+            color: #ff69b4;
+        }
+
+        .stock-change.negative {
+            color: #ffffff;
+        }
+
+        .prediction-box {
+            margin: 15px 0;
+            padding: 15px;
+            border: 4px solid #ff69b4;
+            background-color: #1a1a1a;
+        }
+
+        .prediction-title {
+            color: #ff69b4;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .prediction-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px;
+            border-bottom: 1px dashed #ff69b4;
+        }
+
+        .score-breakdown {
+            margin: 15px 0;
+            padding: 10px;
+            border: 2px solid #ffffff;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .score-label {
+            color: #ff69b4;
+        }
+
+        .score-value {
+            color: #ffffff;
+        }
+
+        .explanation-box {
+            margin: 15px 0;
+            padding: 15px;
+            border: 4px solid #ff69b4;
+            background-color: #1a1a1a;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .explanation-title {
+            color: #ff69b4;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .pixel-bar {
+            height: 20px;
+            background-color: #ffffff;
+            margin: 10px 0;
+            display: flex;
+        }
+
+        .pixel-bar-fill {
+            height: 100%;
+            background-color: #ff69b4;
+            transition: width 0.3s ease;
+        }
+
+        .pixel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .pixel-table th {
+            border: 4px solid #ffffff;
+            padding: 10px;
+            color: #ff69b4;
+            font-size: 1.2rem;
+            text-align: left;
+        }
+
+        .pixel-table td {
+            border: 2px solid #ffffff;
+            padding: 8px;
+        }
+
+        .pixel-table tr:hover {
+            background-color: #1a1a1a;
+        }
+
+        .range-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 2px solid #ff69b4;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .error-message {
+            color: #ff69b4;
+            padding: 20px;
+            text-align: center;
+            border: 4px solid #ffffff;
+            margin-top: 20px;
+            font-size: 1.5rem;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            border: 4px solid #ffffff;
+            border-top-color: #ff69b4;
+            animation: spin 0.8s infinite steps(8);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 2px dotted #ff69b4;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            background-color: #ff69b4;
+            color: #000000;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            border: 2px solid #ffffff;
+            font-size: 0.9rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="terminal">
+        <!-- Header -->
+        <div class="header">
+            <div class="title">RETRO STOCK TERMINAL</div>
+            <div class="status" id="status">● READY</div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="dashboard-nav">
+                    <button onclick="showSection('analyze')">🔍 ANALYZE STOCK</button>
+                    <button onclick="showSection('gainers')">📊 TOP GAINERS</button>
+                    <button onclick="showSection('sentiment')">📰 MARKET SENTIMENT</button>
+                    <button onclick="showSection('sectors')">🔥 HOT SECTORS</button>
+                    <button onclick="showSection('compare')">📈 COMPARE STOCKS</button>
+                    <button onclick="showSection('watchlist')">⭐ WATCHLIST</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Analyze Section -->
+                <div id="section-analyze" class="section active">
+                    <div class="section-title">🔍 ANALYZE STOCK</div>
+                    
+                    <!-- Trading Style Selector -->
+                    <div class="trading-style-selector">
+                        <button class="style-btn active" onclick="setTradingStyle('day')" id="style-day">📅 DAY TRADE</button>
+                        <button class="style-btn" onclick="setTradingStyle('swing')" id="style-swing">⚡ SWING TRADE</button>
+                        <button class="style-btn" onclick="setTradingStyle('long')" id="style-long">📈 LONG-TERM</button>
+                    </div>
+
+                    <!-- Timeframe Selector -->
+                    <div class="timeframe-selector">
+                        <button class="timeframe-btn active" onclick="setTimeframe('1d')" id="tf-1d">1D</button>
+                        <button class="timeframe-btn" onclick="setTimeframe('5d')" id="tf-5d">5D</button>
+                        <button class="timeframe-btn" onclick="setTimeframe('1mo')" id="tf-1mo">1M</button>
+                        <button class="timeframe-btn" onclick="setTimeframe('3mo')" id="tf-3mo">3M</button>
+                        <button class="timeframe-btn" onclick="setTimeframe('1y')" id="tf-1y">1Y</button>
+                    </div>
+
+                    <div class="content-box">
+                        <input type="text" class="pixel-input" id="analyze-ticker" placeholder="ENTER STOCK NAME OR TICKER (e.g., AAPL, Apple, Google, A)" value="AAPL" oninput="searchStocks(this.value)">
+                        <button onclick="analyzeStock()">ANALYZE</button>
+                        <div id="search-results" class="search-results-grid" style="display: none;"></div>
+                        <div id="analyze-result"></div>
+                    </div>
+                </div>
+
+                <!-- Gainers Section -->
+                <div id="section-gainers" class="section">
+                    <div class="section-title">📊 TOP GAINERS</div>
+                    <div class="trading-style-selector">
+                        <button class="style-btn active" onclick="setGainersStyle('day')" id="gainers-day">📅 DAY TRADE</button>
+                        <button class="style-btn" onclick="setGainersStyle('swing')" id="gainers-swing">⚡ SWING TRADE</button>
+                        <button class="style-btn" onclick="setGainersStyle('long')" id="gainers-long">📈 LONG-TERM</button>
+                    </div>
+                    <div class="actions">
+                        <button onclick="loadGainers()">REFRESH</button>
+                    </div>
+                    <div id="gainers-result"></div>
+                </div>
+
+                <!-- Sentiment Section -->
+                <div id="section-sentiment" class="section">
+                    <div class="section-title">📰 MARKET SENTIMENT</div>
+                    <div class="actions">
+                        <button onclick="loadMarketSentiment()">REFRESH</button>
+                    </div>
+                    <div id="sentiment-result"></div>
+                </div>
+
+                <!-- Sectors Section -->
+                <div id="section-sectors" class="section">
+                    <div class="section-title">🔥 HOT SECTORS</div>
+                    <div class="actions">
+                        <button onclick="loadSectors()">REFRESH</button>
+                    </div>
+                    <div id="sectors-result"></div>
+                </div>
+
+                <!-- Compare Section -->
+                <div id="section-compare" class="section">
+                    <div class="section-title">📈 COMPARE STOCKS</div>
+                    <div class="trading-style-selector">
+                        <button class="style-btn active" onclick="setCompareStyle('day')" id="compare-day">📅 DAY TRADE</button>
+                        <button class="style-btn" onclick="setCompareStyle('swing')" id="compare-swing">⚡ SWING TRADE</button>
+                        <button class="style-btn" onclick="setCompareStyle('long')" id="compare-long">📈 LONG-TERM</button>
+                    </div>
+                    <input type="text" class="pixel-input" id="compare-tickers" placeholder="TICKERS (e.g., AAPL,MSFT,GOOGL)" value="AAPL,MSFT,GOOGL">
+                    <div class="actions">
+                        <button onclick="compareStocks()">COMPARE</button>
+                    </div>
+                    <div id="compare-result"></div>
+                </div>
+
+                <!-- Watchlist Section -->
+                <div id="section-watchlist" class="section">
+                    <div class="section-title">⭐ WATCHLIST</div>
+                    <input type="text" class="pixel-input" id="watchlist-add" placeholder="ADD TICKER">
+                    <div class="actions">
+                        <button onclick="addToWatchlist()">ADD</button>
+                    </div>
+                    <div id="watchlist-result"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIG ====================
+        const NEWS_API_KEY = ''; // Add your NewsAPI key here
+        const cache = new Map();
+        const CACHE_DURATION = 60000; // 1 minute
+
+        // Expanded stock database with names and tickers
+        const STOCK_DATABASE = [
+            { ticker: 'AAPL', name: 'Apple Inc.' },
+            { ticker: 'MSFT', name: 'Microsoft Corporation' },
+            { ticker: 'GOOGL', name: 'Google (Alphabet Inc.)' },
+            { ticker: 'GOOG', name: 'Google (Alphabet Inc.)' },
+            { ticker: 'AMZN', name: 'Amazon.com Inc.' },
+            { ticker: 'TSLA', name: 'Tesla Inc.' },
+            { ticker: 'META', name: 'Meta Platforms Inc. (Facebook)' },
+            { ticker: 'NVDA', name: 'NVIDIA Corporation' },
+            { ticker: 'JPM', name: 'JPMorgan Chase & Co.' },
+            { ticker: 'V', name: 'Visa Inc.' },
+            { ticker: 'JNJ', name: 'Johnson & Johnson' },
+            { ticker: 'WMT', name: 'Walmart Inc.' },
+            { ticker: 'PG', name: 'Procter & Gamble Co.' },
+            { ticker: 'DIS', name: 'The Walt Disney Company' },
+            { ticker: 'NFLX', name: 'Netflix Inc.' },
+            { ticker: 'ADBE', name: 'Adobe Inc.' },
+            { ticker: 'CRM', name: 'Salesforce Inc.' },
+            { ticker: 'INTC', name: 'Intel Corporation' },
+            { ticker: 'AMD', name: 'Advanced Micro Devices Inc.' },
+            { ticker: 'UBER', name: 'Uber Technologies Inc.' },
+            { ticker: 'PYPL', name: 'PayPal Holdings Inc.' },
+            { ticker: 'NVO', name: 'Novo Nordisk A/S' },
+            { ticker: 'ASML', name: 'ASML Holding N.V.' },
+            { ticker: 'AVGO', name: 'Broadcom Inc.' },
+            { ticker: 'ORCL', name: 'Oracle Corporation' },
+            { ticker: 'ACN', name: 'Accenture plc' },
+            { ticker: 'TMO', name: 'Thermo Fisher Scientific Inc.' },
+            { ticker: 'DHR', name: 'Danaher Corporation' },
+            { ticker: 'LIN', name: 'Linde plc' },
+            { ticker: 'SCHW', name: 'Charles Schwab Corporation' },
+            { ticker: 'BX', name: 'Blackstone Inc.' },
+            { ticker: 'BLK', name: 'BlackRock Inc.' },
+            { ticker: 'MS', name: 'Morgan Stanley' },
+            { ticker: 'GS', name: 'Goldman Sachs Group Inc.' },
+            { ticker: 'C', name: 'Citigroup Inc.' },
+            { ticker: 'USB', name: 'U.S. Bancorp' },
+            { ticker: 'PNC', name: 'PNC Financial Services Group' },
+            { ticker: 'TFC', name: 'Truist Financial Corporation' },
+            { ticker: 'COF', name: 'Capital One Financial Corporation' },
+            { ticker: 'SPY', name: 'SPDR S&P 500 ETF Trust' },
+            { ticker: 'QQQ', name: 'Invesco QQQ Trust' },
+            { ticker: 'DIA', name: 'SPDR Dow Jones Industrial Average ETF' },
+            { ticker: 'IWM', name: 'iShares Russell 2000 ETF' },
+            { ticker: 'XLK', name: 'Technology Select Sector SPDR Fund' },
+            { ticker: 'XLF', name: 'Financial Select Sector SPDR Fund' },
+            { ticker: 'XLV', name: 'Health Care Select Sector SPDR Fund' },
+            { ticker: 'XLE', name: 'Energy Select Sector SPDR Fund' },
+            { ticker: 'XLY', name: 'Consumer Discretionary Select Sector SPDR Fund' },
+            { ticker: 'XLI', name: 'Industrial Select Sector SPDR Fund' }
+        ];
+
+        // Trading style and timeframe state
+        let currentTradingStyle = 'day';
+        let currentTimeframe = '1d';
+        let gainersStyle = 'day';
+        let compareStyle = 'day';
+
+        // Watchlist
+        let watchlist = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA'];
+
+        // ==================== SMART SEARCH FUNCTION ====================
+        function searchStocks(query) {
+            const searchResults = document.getElementById('search-results');
+            query = query.trim().toLowerCase();
+            
+            if (query.length < 1) {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            // Search in database
+            const matches = STOCK_DATABASE.filter(stock => 
+                stock.ticker.toLowerCase().includes(query) ||
+                stock.name.toLowerCase().includes(query)
+            ).slice(0, 8); // Limit to 8 results
+
+            if (matches.length === 0) {
+                searchResults.style.display = 'none';
+                searchResults.innerHTML = '';
+                return;
+            }
+
+            // Display results
+            searchResults.style.display = 'grid';
+            searchResults.innerHTML = matches.map(stock => `
+                <div class="search-result-item" onclick="selectStock('${stock.ticker}')">
+                    <div class="search-result-ticker">${stock.ticker}</div>
+                    <div class="search-result-name">${stock.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function selectStock(ticker) {
+            document.getElementById('analyze-ticker').value = ticker;
+            document.getElementById('search-results').style.display = 'none';
+            analyzeStock();
+        }
+
+        // ==================== TRADING STYLE FUNCTIONS ====================
+        function setTradingStyle(style) {
+            currentTradingStyle = style;
+            document.querySelectorAll('#section-analyze .style-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`style-${style}`).classList.add('active');
+            document.getElementById('status').textContent = `● ${style.toUpperCase()} MODE`;
+        }
+
+        function setTimeframe(tf) {
+            currentTimeframe = tf;
+            document.querySelectorAll('.timeframe-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tf-${tf}`).classList.add('active');
+        }
+
+        // Fixed: Added missing function with proper event handling
+        function setGainersStyle(style) {
+            gainersStyle = style;
+            // Remove active class from all gainer style buttons
+            document.querySelectorAll('#section-gainers .style-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to the clicked button
+            const activeButton = document.getElementById(`gainers-${style}`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            loadGainers();
+        }
+
+        // Fixed: Added missing function with proper event handling
+        function setCompareStyle(style) {
+            compareStyle = style;
+            // Remove active class from all compare style buttons
+            document.querySelectorAll('#section-compare .style-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Add active class to the clicked button
+            const activeButton = document.getElementById(`compare-${style}`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(`section-${sectionId}`).classList.add('active');
+            
+            // Load data when switching to specific sections
+            if (sectionId === 'gainers') {
+                loadGainers();
+            } else if (sectionId === 'sentiment') {
+                loadMarketSentiment();
+            } else if (sectionId === 'sectors') {
+                loadSectors();
+            } else if (sectionId === 'watchlist') {
+                displayWatchlist();
+            }
+        }
+
+        function setLoading(loading) {
+            document.getElementById('status').textContent = loading ? '● FETCHING DATA...' : `● ${currentTradingStyle.toUpperCase()} MODE`;
+        }
+
+        // ==================== STOCK VALIDATION ====================
+        function isValidTicker(ticker) {
+            return /^[A-Z]{1,5}$/.test(ticker.toUpperCase());
+        }
+
+        function findTickerFromName(input) {
+            const upperInput = input.toUpperCase();
+            
+            // First check if it's already a valid ticker
+            if (isValidTicker(upperInput)) {
+                return upperInput;
+            }
+            
+            // Search in database
+            const lowerInput = input.toLowerCase();
+            const match = STOCK_DATABASE.find(stock => 
+                stock.ticker.toLowerCase() === lowerInput ||
+                stock.name.toLowerCase().includes(lowerInput) ||
+                stock.name.toLowerCase() === lowerInput
+            );
+            
+            return match ? match.ticker : upperInput;
+        }
+
+        // ==================== DECIMAL FORMATTING ====================
+        function formatPrice(value) {
+            if (value === null || value === undefined) return '0.00';
+            return value.toFixed(2);
+        }
+
+        function formatPercent(value) {
+            if (value === null || value === undefined) return '0.00';
+            return value.toFixed(2);
+        }
+
+        function formatDecimal(value, places = 3) {
+            if (value === null || value === undefined) return '0';
+            return value.toFixed(places);
+        }
+
+        // ==================== PRICE PREDICTION ENGINE ====================
+        function generatePredictions(data, sentiment, tradingStyle, timeframe) {
+            const price = data.price;
+            const volatility = data.volatility || 2;
+            const momentum = data.change || 0;
+            
+            let bullishBias = (sentiment * 0.3) + (momentum / 100 * 0.5);
+            let bearishBias = (-sentiment * 0.2) + (-momentum / 100 * 0.3);
+            
+            let timeMultiplier;
+            switch(timeframe) {
+                case '1d': timeMultiplier = 1; break;
+                case '5d': timeMultiplier = 1.5; break;
+                case '1mo': timeMultiplier = 2.5; break;
+                case '3mo': timeMultiplier = 4; break;
+                case '1y': timeMultiplier = 6; break;
+                default: timeMultiplier = 1;
+            }
+            
+            const volatilityEffect = (volatility / 100) * timeMultiplier;
+            const upperBound = 1 + (volatilityEffect * 1.5);
+            const lowerBound = 1 - (volatilityEffect * 0.8);
+            
+            const bullishTarget = price * (1 + Math.max(0.01, bullishBias) * timeMultiplier * 0.5);
+            const bearishTarget = price * (1 - Math.max(0.005, bearishBias) * timeMultiplier * 0.3);
+            const mostLikely = price * (1 + (bullishBias - bearishBias) * timeMultiplier * 0.3);
+            
+            const upProbability = Math.min(90, Math.max(10, 50 + (bullishBias * 100) - (bearishBias * 50)));
+            const downProbability = 100 - upProbability;
+            
+            let riskLevel;
+            if (volatility < 2) riskLevel = "LOW";
+            else if (volatility < 5) riskLevel = "MODERATE";
+            else if (volatility < 10) riskLevel = "HIGH";
+            else riskLevel = "EXTREME";
+            
+            let predictionText = "";
+            let confidenceText = "";
+            
+            if (upProbability > 65) {
+                predictionText = `BULLISH 📈`;
+                confidenceText = `${upProbability.toFixed(0)}% probability of upward movement`;
+            } else if (upProbability < 35) {
+                predictionText = `BEARISH 📉`;
+                confidenceText = `${downProbability.toFixed(0)}% probability of downward movement`;
+            } else {
+                predictionText = `NEUTRAL ⚖️`;
+                confidenceText = `Market uncertain with balanced probabilities`;
+            }
+            
+            return {
+                currentPrice: price,
+                bullishTarget: bullishTarget,
+                bearishTarget: bearishTarget,
+                mostLikely: mostLikely,
+                upProbability: upProbability,
+                downProbability: downProbability,
+                riskLevel: riskLevel,
+                predictionText: predictionText,
+                confidenceText: confidenceText,
+                volatilityEffect: volatilityEffect * 100,
+                range: {
+                    low: price * lowerBound,
+                    high: price * upperBound
+                }
+            };
+        }
+
+        // ==================== DATA FETCHING ====================
+        async function fetchStockData(ticker, timeframe = '1mo') {
+            const cacheKey = `stock_${ticker}_${timeframe}`;
+            const cached = cache.get(cacheKey);
+            if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+                return cached.data;
+            }
+
+            try {
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const yahooUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?interval=1d&range=${timeframe}`;
+                
+                const response = await fetch(proxyUrl + encodeURIComponent(yahooUrl));
+                
+                if (!response.ok) {
+                    return { error: 'STOCK NOT FOUND' };
+                }
+
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    return { error: 'INVALID DATA' };
+                }
+
+                if (!data.chart || !data.chart.result || data.chart.result.length === 0) {
+                    return { error: 'STOCK NOT FOUND' };
+                }
+
+                const result = data.chart.result[0];
+                
+                if (!result.indicators || !result.indicators.quote || !result.indicators.quote[0]) {
+                    return { error: 'NO PRICE DATA' };
+                }
+
+                const meta = result.meta;
+                const quote = result.indicators.quote[0];
+                
+                const prices = quote.close || [];
+                if (!prices || prices.length === 0 || prices.every(p => p === null)) {
+                    return { error: 'NO PRICE DATA' };
+                }
+
+                const validPrices = prices.filter(p => p !== null);
+                if (validPrices.length === 0) {
+                    return { error: 'NO VALID PRICES' };
+                }
+
+                const latestPrice = validPrices[validPrices.length - 1];
+                const startPrice = validPrices[0];
+                const totalChange = ((latestPrice - startPrice) / startPrice) * 100;
+                
+                const dailyChange = validPrices.length > 1 ? 
+                    ((validPrices[validPrices.length-1] - validPrices[validPrices.length-2]) / validPrices[validPrices.length-2]) * 100 : 0;
+                
+                const returns = [];
+                for (let i = 1; i < validPrices.length; i++) {
+                    returns.push((validPrices[i] - validPrices[i-1]) / validPrices[i-1]);
+                }
+                
+                const avgReturn = returns.length > 0 ? 
+                    returns.reduce((a, b) => a + b, 0) / returns.length : 0;
+                const variance = returns.length > 0 ?
+                    returns.reduce((a, b) => a + Math.pow(b - avgReturn, 2), 0) / returns.length : 0;
+                const dailyVol = Math.sqrt(variance) * 100;
+                const volatility = dailyVol * Math.sqrt(252);
+                
+                const volumes = quote.volume ? quote.volume.filter(v => v !== null) : [];
+                const latestVolume = volumes.length > 0 ? volumes[volumes.length - 1] : 0;
+                
+                const avgVolume = volumes.length > 0 ? 
+                    volumes.slice(-10).reduce((a, b) => a + b, 0) / Math.min(10, volumes.length) : 0;
+
+                const allPrices = validPrices;
+                const high52w = Math.max(...allPrices);
+                const low52w = Math.min(...allPrices);
+
+                const sma20 = validPrices.length >= 20 ? 
+                    validPrices.slice(-20).reduce((a, b) => a + b, 0) / 20 : latestPrice;
+                const sma50 = validPrices.length >= 50 ? 
+                    validPrices.slice(-50).reduce((a, b) => a + b, 0) / 50 : latestPrice;
+
+                const stockData = {
+                    ticker: ticker.toUpperCase(),
+                    name: meta.symbol || ticker,
+                    price: latestPrice,
+                    change: totalChange,
+                    dailyChange: dailyChange,
+                    volume: latestVolume,
+                    avgVolume: avgVolume,
+                    high52w: high52w,
+                    low52w: low52w,
+                    volatility: volatility,
+                    dailyVol: dailyVol,
+                    returns: returns,
+                    prices: validPrices,
+                    sma20: sma20,
+                    sma50: sma50,
+                    timeframe: timeframe,
+                    success: true
+                };
+
+                cache.set(cacheKey, {
+                    data: stockData,
+                    timestamp: Date.now()
+                });
+
+                return stockData;
+
+            } catch (error) {
+                console.error('Error fetching stock:', error);
+                return { error: 'STOCK NOT FOUND' };
+            }
+        }
+
+        async function getSentiment(ticker) {
+            const hash = ticker.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+            return ((hash % 200) - 100) / 100 * 0.6;
+        }
+
+        // ==================== SCORING ====================
+        function calculateScore(data, sentiment = 0, tradingStyle = 'day') {
+            let scores = {
+                momentum: 50,
+                volatility: 50,
+                volume: 50,
+                sentiment: 50,
+                range: 50,
+                movingAvg: 50
+            };
+            
+            const momentumRaw = data.change;
+            scores.momentum = 50 + (momentumRaw * 1.5);
+            
+            const volRaw = data.volatility || 5;
+            if (tradingStyle === 'day' || tradingStyle === 'swing') {
+                scores.volatility = 50 + (volRaw * 2);
+            } else {
+                scores.volatility = 50 - (volRaw * 1.5);
+            }
+            
+            if (data.avgVolume > 0) {
+                const volRatio = data.volume / data.avgVolume;
+                scores.volume = 50 + (Math.min(volRatio, 2) * 20);
+            }
+            
+            scores.sentiment = 50 + (sentiment * 30);
+            
+            const range = data.high52w - data.low52w;
+            if (range > 0) {
+                const position = (data.price - data.low52w) / range;
+                scores.range = 50 + ((position - 0.5) * 30);
+            }
+            
+            if (data.price > data.sma20 && data.price > data.sma50) {
+                scores.movingAvg = 80;
+            } else if (data.price > data.sma20) {
+                scores.movingAvg = 65;
+            } else if (data.price > data.sma50) {
+                scores.movingAvg = 60;
+            } else {
+                scores.movingAvg = 40;
+            }
+            
+            Object.keys(scores).forEach(key => {
+                scores[key] = Math.max(0, Math.min(100, scores[key]));
+            });
+            
+            let weights;
+            if (tradingStyle === 'day') {
+                weights = { momentum: 0.20, volatility: 0.25, volume: 0.20, sentiment: 0.10, range: 0.10, movingAvg: 0.15 };
+            } else if (tradingStyle === 'swing') {
+                weights = { momentum: 0.25, volatility: 0.20, volume: 0.15, sentiment: 0.15, range: 0.10, movingAvg: 0.15 };
+            } else {
+                weights = { momentum: 0.25, volatility: 0.10, volume: 0.10, sentiment: 0.20, range: 0.15, movingAvg: 0.20 };
+            }
+            
+            let total = 0;
+            const breakdown = {};
+            
+            for (let [key, value] of Object.entries(scores)) {
+                const weighted = value * weights[key];
+                total += weighted;
+                breakdown[key] = {
+                    raw: value,
+                    weighted: weighted,
+                    contribution: weights[key]
+                };
+            }
+            
+            total = Math.max(0, Math.min(100, total));
+            
+            return {
+                total: total,
+                breakdown: breakdown,
+                style: tradingStyle
+            };
+        }
+
+        // ==================== EXPLANATION GENERATOR ====================
+        function generateExplanation(data, scoreData, sentiment, tradingStyle, predictions) {
+            const name = data.ticker;
+            const price = formatPrice(data.price);
+            const change = formatPercent(data.change);
+            const vol = formatDecimal(data.volatility, 1);
+            const momentum = scoreData.breakdown.momentum.raw.toFixed(0);
+            
+            let style_adjective, reason, action;
+            
+            const isGood = scoreData.total > 65;
+            const isExcellent = scoreData.total > 80;
+            const isPoor = scoreData.total < 40;
+            
+            if (tradingStyle === 'day') {
+                if (isExcellent) {
+                    style_adjective = "EXCELLENT";
+                    reason = `high volatility (${vol}%) and strong momentum (${momentum}%) make it perfect for quick profits today`;
+                } else if (isGood) {
+                    style_adjective = "GOOD";
+                    reason = `decent volatility (${vol}%) and volume for day trading opportunities`;
+                } else if (isPoor) {
+                    style_adjective = "POOR";
+                    reason = `low volatility (${vol}%) means it won't move enough for profitable day trades`;
+                } else {
+                    style_adjective = "OKAY";
+                    reason = `average volatility - better options might exist for day trading`;
+                }
+                action = isGood ? "CONSIDER ENTERING" : "AVOID";
+            } 
+            else if (tradingStyle === 'swing') {
+                if (isExcellent) {
+                    style_adjective = "EXCELLENT";
+                    reason = `strong trend (${change}% over ${data.timeframe}) and positive setup for a multi-day swing`;
+                } else if (isGood) {
+                    style_adjective = "GOOD";
+                    reason = `decent trend and volatility (${vol}%) for a 3-10 day swing trade`;
+                } else if (isPoor) {
+                    style_adjective = "POOR";
+                    reason = `unclear direction and low momentum - not ideal for swing trading`;
+                } else {
+                    style_adjective = "OKAY";
+                    reason = `average setup - wait for clearer signals`;
+                }
+                action = isGood ? "WATCH FOR ENTRY" : "SKIP";
+            } 
+            else {
+                if (isExcellent) {
+                    style_adjective = "EXCELLENT";
+                    reason = `solid fundamentals, positive sentiment (${sentiment > 0 ? '+' : ''}${formatDecimal(sentiment, 2)}), and strong long-term potential`;
+                } else if (isGood) {
+                    style_adjective = "GOOD";
+                    reason = `decent long-term prospects with manageable volatility (${vol}%)`;
+                } else if (isPoor) {
+                    style_adjective = "POOR";
+                    reason = `high volatility (${vol}%) and weak momentum make it risky for long-term holding`;
+                } else {
+                    style_adjective = "OKAY";
+                    reason = `average long-term potential - consider dollar-cost averaging`;
+                }
+                action = isGood ? "CONSIDER ADDING" : "AVOID";
+            }
+            
+            const trendWord = data.change > 0 ? 'UP' : 'DOWN';
+            const emoji = data.change > 0 ? '📈' : '📉';
+            
+            return {
+                short: `${name} is a ${style_adjective} choice for ${tradingStyle} trading.`,
+                long: `${name} is currently trading at $${price}, ${trendWord} ${Math.abs(data.change)}% over the ${data.timeframe} period ${emoji}. ` +
+                      `It's ${style_adjective} for ${tradingStyle} trading because ${reason}. ` +
+                      `Our predictive model shows a ${predictions.upProbability.toFixed(0)}% chance of upward movement with a target of $${formatPrice(predictions.mostLikely)}. ` +
+                      `Risk level is ${predictions.riskLevel}.`,
+                action: action,
+                emoji: emoji
+            };
+        }
+
+        // ==================== UI FORMATTING ====================
+        function formatVolume(volume) {
+            if (!volume) return 'N/A';
+            if (volume >= 1e9) return (volume / 1e9).toFixed(2) + 'B';
+            if (volume >= 1e6) return (volume / 1e6).toFixed(2) + 'M';
+            if (volume >= 1e3) return (volume / 1e3).toFixed(2) + 'K';
+            return volume.toString();
+        }
+
+        function createPixelBar(value, max = 100, width = 20) {
+            const filled = Math.min(width, Math.floor((value / max) * width));
+            const bar = '█'.repeat(filled) + '░'.repeat(width - filled);
+            return `<span style="color: #ff69b4; font-family: monospace; letter-spacing: 2px;">${bar}</span>`;
+        }
+
+        function getTimeframeLabel(tf) {
+            const labels = {
+                '1d': 'DAY',
+                '5d': '5 DAYS',
+                '1mo': 'MONTH',
+                '3mo': '3 MONTHS',
+                '1y': 'YEAR'
+            };
+            return labels[tf] || tf;
+        }
+
+        // ==================== ANALYZE STOCK ====================
+        async function analyzeStock() {
+            const input = document.getElementById('analyze-ticker').value.trim();
+            if (!input) return;
+            
+            // Convert name to ticker if needed
+            const ticker = findTickerFromName(input);
+            
+            setLoading(true);
+            const resultDiv = document.getElementById('analyze-result');
+            const searchResults = document.getElementById('search-results');
+            searchResults.style.display = 'none';
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            const data = await fetchStockData(ticker, currentTimeframe);
+            
+            if (data.error) {
+                resultDiv.innerHTML = `<div class="error-message">❌ ${data.error}: ${input}</div>`;
+                setLoading(false);
+                return;
+            }
+            
+            const sentiment = await getSentiment(ticker);
+            const scoreData = calculateScore(data, sentiment, currentTradingStyle);
+            const predictions = generatePredictions(data, sentiment, currentTradingStyle, currentTimeframe);
+            
+            const changeClass = data.change >= 0 ? 'positive' : 'negative';
+            const changeSymbol = data.change >= 0 ? '▲' : '▼';
+            
+            const explanation = generateExplanation(data, scoreData, sentiment, currentTradingStyle, predictions);
+            
+            let breakdownHtml = '';
+            for (let [key, value] of Object.entries(scoreData.breakdown)) {
+                const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+                breakdownHtml += `
+                    <div class="score-row">
+                        <span class="score-label tooltip">${label}<span class="tooltip-text">Weight: ${(value.contribution*100).toFixed(0)}%</span></span>
+                        <span class="score-value">${value.raw.toFixed(0)}% ${createPixelBar(value.raw, 100, 8)}</span>
+                    </div>
+                `;
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="stock-card">
+                    <div class="stock-ticker">
+                        ${data.ticker} 
+                        <span>
+                            <span class="range-badge">${getTimeframeLabel(currentTimeframe)}</span>
+                            <span class="range-badge">${currentTradingStyle.toUpperCase()}</span>
+                        </span>
+                    </div>
+                    <div class="stock-price">$${formatPrice(data.price)}</div>
+                    <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(data.change).toFixed(2)}% (Total)</div>
+                    <div class="stock-change ${data.dailyChange >= 0 ? 'positive' : 'negative'}">
+                        Today: ${data.dailyChange > 0 ? '▲' : '▼'} ${Math.abs(data.dailyChange).toFixed(2)}%
+                    </div>
+                    
+                    <div class="pixel-bar">
+                        <div class="pixel-bar-fill" style="width: ${scoreData.total}%"></div>
+                    </div>
+                    <div style="text-align: center; font-size: 1.5rem; margin: 15px 0; color: #ff69b4;">
+                        SCORE: ${scoreData.total.toFixed(0)}%
+                    </div>
+                    
+                    <div class="prediction-box">
+                        <div class="prediction-title">🔮 PRICE PREDICTION (${currentTimeframe})</div>
+                        <div class="prediction-row">
+                            <span>Current Price:</span>
+                            <span>$${formatPrice(predictions.currentPrice)}</span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Bullish Target:</span>
+                            <span class="positive">$${formatPrice(predictions.bullishTarget)} (+${((predictions.bullishTarget/predictions.currentPrice - 1)*100).toFixed(1)}%)</span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Bearish Target:</span>
+                            <span class="negative">$${formatPrice(predictions.bearishTarget)} (${((predictions.bearishTarget/predictions.currentPrice - 1)*100).toFixed(1)}%)</span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Most Likely:</span>
+                            <span>$${formatPrice(predictions.mostLikely)} (${((predictions.mostLikely/predictions.currentPrice - 1)*100).toFixed(1)}%)</span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Expected Range:</span>
+                            <span>$${formatPrice(predictions.range.low)} - $${formatPrice(predictions.range.high)}</span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Probability Up/Down:</span>
+                            <span><span class="positive">${predictions.upProbability.toFixed(0)}% ↑</span> / <span class="negative">${predictions.downProbability.toFixed(0)}% ↓</span></span>
+                        </div>
+                        <div class="prediction-row">
+                            <span>Risk Level:</span>
+                            <span style="color: ${predictions.riskLevel === 'LOW' ? '#00ff00' : predictions.riskLevel === 'MODERATE' ? '#ffff00' : '#ff69b4'}">${predictions.riskLevel}</span>
+                        </div>
+                        <div style="margin-top: 10px; text-align: center; font-size: 1.2rem;">
+                            ${predictions.predictionText} - ${predictions.confidenceText}
+                        </div>
+                    </div>
+                    
+                    <div class="explanation-box">
+                        <div class="explanation-title">📢 ${explanation.emoji} ANALYSIS:</div>
+                        <div>${explanation.long}</div>
+                        <div style="margin-top: 10px; color: ${explanation.action === 'CONSIDER ADDING' || explanation.action === 'CONSIDER ENTERING' ? '#ff69b4' : '#ffffff'};">
+                            <strong>👉 RECOMMENDATION: ${explanation.action}</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="score-breakdown">
+                        <div style="color: #ff69b4; margin-bottom: 10px; font-size: 1.2rem;">📊 SCORE BREAKDOWN:</div>
+                        ${breakdownHtml}
+                    </div>
+                    
+                    <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.95rem;">
+                        <div>VOLUME: ${formatVolume(data.volume)}</div>
+                        <div>AVG VOL: ${formatVolume(data.avgVolume)}</div>
+                        <div>52WK HIGH: $${formatPrice(data.high52w)}</div>
+                        <div>52WK LOW: $${formatPrice(data.low52w)}</div>
+                        <div>VOLATILITY: ${formatDecimal(data.volatility, 1)}%</div>
+                        <div>SENTIMENT: ${sentiment > 0 ? '+' : ''}${formatDecimal(sentiment, 2)}</div>
+                        <div>SMA20: $${formatPrice(data.sma20)}</div>
+                        <div>SMA50: $${formatPrice(data.sma50)}</div>
+                    </div>
+                </div>
+            `;
+            
+            setLoading(false);
+        }
+
+        // ==================== LOAD GAINERS ====================
+        async function loadGainers() {
+            setLoading(true);
+            const resultDiv = document.getElementById('gainers-result');
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            const topStocks = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'NVDA', 'META', 'JPM', 'V', 'JNJ'];
+            const gainers = [];
+            
+            for (const ticker of topStocks) {
+                const data = await fetchStockData(ticker, '1mo');
+                if (data && !data.error) {
+                    const sentiment = await getSentiment(ticker);
+                    const score = calculateScore(data, sentiment, gainersStyle);
+                    gainers.push({...data, score: score.total});
+                }
+            }
+            
+            gainers.sort((a, b) => b.score - a.score);
+            
+            if (gainers.length === 0) {
+                resultDiv.innerHTML = '<div class="error-message">⚠️ NO DATA AVAILABLE</div>';
+                setLoading(false);
+                return;
+            }
+            
+            let html = '<table class="pixel-table">';
+            html += '<tr><th>TICKER</th><th>PRICE</th><th>CHANGE</th><th>SCORE</th><th>VOLATILITY</th><th>ACTION</th></tr>';
+            
+            gainers.slice(0, 5).forEach(stock => {
+                const changeClass = stock.change >= 0 ? 'positive' : 'negative';
+                const changeSymbol = stock.change >= 0 ? '▲' : '▼';
+                const scoreColor = stock.score > 70 ? '#ff69b4' : stock.score > 50 ? '#ffffff' : '#888888';
+                html += `<tr>
+                    <td><strong>${stock.ticker}</strong></td>
+                    <td>$${formatPrice(stock.price)}</td>
+                    <td class="${changeClass}">${changeSymbol} ${Math.abs(stock.change).toFixed(2)}%</td>
+                    <td style="color: ${scoreColor};">${stock.score.toFixed(0)}%</td>
+                    <td>${formatDecimal(stock.volatility, 1)}%</td>
+                    <td><button onclick="quickAnalyze('${stock.ticker}')" style="background: none; border: 2px solid #ff69b4; color: white; cursor: pointer; padding: 4px 8px;">VIEW</button></td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            resultDiv.innerHTML = html;
+            setLoading(false);
+        }
+
+        function quickAnalyze(ticker) {
+            document.getElementById('analyze-ticker').value = ticker;
+            showSection('analyze');
+            analyzeStock();
+        }
+
+        // ==================== LOAD MARKET SENTIMENT ====================
+        async function loadMarketSentiment() {
+            setLoading(true);
+            const resultDiv = document.getElementById('sentiment-result');
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            const indices = {
+                'SPY': 'S&P 500',
+                'QQQ': 'NASDAQ',
+                'DIA': 'DOW JONES',
+                'IWM': 'RUSSELL'
+            };
+            
+            let html = '<table class="pixel-table">';
+            html += '<tr><th>INDEX</th><th>PRICE</th><th>1M CHANGE</th><th>VOLATILITY</th><th>TREND</th></tr>';
+            
+            for (const [ticker, name] of Object.entries(indices)) {
+                const data = await fetchStockData(ticker, '1mo');
+                
+                if (data && !data.error) {
+                    const trend = data.change > 2 ? '🚀' : data.change > 0 ? '📈' : data.change > -2 ? '📉' : '💥';
+                    
+                    html += `<tr>
+                        <td>${ticker}</td>
+                        <td>$${formatPrice(data.price)}</td>
+                        <td class="${data.change >= 0 ? 'positive' : 'negative'}">${data.change > 0 ? '+' : ''}${data.change.toFixed(2)}%</td>
+                        <td>${formatDecimal(data.volatility, 1)}%</td>
+                        <td>${trend}</td>
+                    </tr>`;
+                }
+            }
+            
+            html += '</table>';
+            resultDiv.innerHTML = html;
+            setLoading(false);
+        }
+
+        // ==================== LOAD SECTORS ====================
+        async function loadSectors() {
+            setLoading(true);
+            const resultDiv = document.getElementById('sectors-result');
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            const sectors = {
+                'XLK': 'TECHNOLOGY',
+                'XLF': 'FINANCIAL',
+                'XLV': 'HEALTHCARE',
+                'XLE': 'ENERGY',
+                'XLY': 'CONSUMER',
+                'XLI': 'INDUSTRIAL'
+            };
+            
+            const sectorData = [];
+            
+            for (const [ticker, name] of Object.entries(sectors)) {
+                const data = await fetchStockData(ticker, '1mo');
+                if (data && !data.error) {
+                    sectorData.push({
+                        name: name,
+                        change: data.change,
+                        volatility: data.volatility
+                    });
+                }
+            }
+            
+            sectorData.sort((a, b) => b.change - a.change);
+            
+            let html = '<table class="pixel-table">';
+            html += '<tr><th>RANK</th><th>SECTOR</th><th>1M CHANGE</th><th>VOLATILITY</th><th>BAR</th></tr>';
+            
+            sectorData.forEach((sector, i) => {
+                const arrow = sector.change > 2 ? '🚀' : sector.change > 0 ? '📈' : '📉';
+                const changeClass = sector.change > 0 ? 'positive' : 'negative';
+                
+                html += `<tr>
+                    <td>#${i + 1}</td>
+                    <td>${sector.name}</td>
+                    <td class="${changeClass}">${sector.change > 0 ? '+' : ''}${sector.change.toFixed(2)}% ${arrow}</td>
+                    <td>${formatDecimal(sector.volatility, 1)}%</td>
+                    <td>${createPixelBar(Math.abs(sector.change) * 3, 100, 15)}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            resultDiv.innerHTML = html;
+            setLoading(false);
+        }
+
+        // ==================== COMPARE STOCKS ====================
+        async function compareStocks() {
+            const tickersInput = document.getElementById('compare-tickers').value.trim();
+            const tickers = tickersInput.split(',').map(t => t.trim().toUpperCase()).filter(t => t);
+            
+            if (tickers.length < 2) {
+                alert('ENTER AT LEAST 2 TICKERS');
+                return;
+            }
+            
+            setLoading(true);
+            const resultDiv = document.getElementById('compare-result');
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            let html = '<table class="pixel-table">';
+            html += '<tr><th>TICKER</th><th>PRICE</th><th>1M CHANGE</th><th>VOLATILITY</th><th>SCORE</th><th>ACTION</th></tr>';
+            
+            for (const ticker of tickers.slice(0, 5)) {
+                const data = await fetchStockData(ticker, '1mo');
+                if (data && !data.error) {
+                    const sentiment = await getSentiment(ticker);
+                    const score = calculateScore(data, sentiment, compareStyle);
+                    const changeClass = data.change >= 0 ? 'positive' : 'negative';
+                    const changeSymbol = data.change >= 0 ? '▲' : '▼';
+                    
+                    html += `<tr>
+                        <td><strong>${ticker}</strong></td>
+                        <td>$${formatPrice(data.price)}</td>
+                        <td class="${changeClass}">${changeSymbol} ${Math.abs(data.change).toFixed(2)}%</td>
+                        <td>${formatDecimal(data.volatility, 1)}%</td>
+                        <td style="color: #ff69b4;">${score.total.toFixed(0)}%</td>
+                        <td><button onclick="quickAnalyze('${ticker}')" style="background: none; border: 2px solid #ff69b4; color: white; cursor: pointer; padding: 4px 8px;">VIEW</button></td>
+                    </tr>`;
+                } else {
+                    html += `<tr>
+                        <td><strong>${ticker}</strong></td>
+                        <td colspan="5" style="color: #ff69b4;">❌ NOT FOUND</td>
+                    </tr>`;
+                }
+            }
+            
+            html += '</table>';
+            resultDiv.innerHTML = html;
+            setLoading(false);
+        }
+
+        // ==================== WATCHLIST FUNCTIONS ====================
+        function addToWatchlist() {
+            const ticker = document.getElementById('watchlist-add').value.trim().toUpperCase();
+            if (!ticker) return;
+            
+            if (!isValidTicker(ticker)) {
+                alert('INVALID TICKER FORMAT');
+                return;
+            }
+            
+            if (!watchlist.includes(ticker)) {
+                watchlist.push(ticker);
+            }
+            
+            displayWatchlist();
+            document.getElementById('watchlist-add').value = '';
+        }
+
+        async function displayWatchlist() {
+            const resultDiv = document.getElementById('watchlist-result');
+            resultDiv.innerHTML = '<div class="loading"></div>';
+            
+            if (watchlist.length === 0) {
+                resultDiv.innerHTML = '<div class="error-message">⭐ WATCHLIST IS EMPTY</div>';
+                return;
+            }
+            
+            let html = '<div class="stock-grid">';
+            
+            for (const ticker of watchlist) {
+                const data = await fetchStockData(ticker, '1mo');
+                if (data && !data.error) {
+                    const sentiment = await getSentiment(ticker);
+                    const score = calculateScore(data, sentiment, 'swing');
+                    const predictions = generatePredictions(data, sentiment, 'swing', '1mo');
+                    const changeClass = data.change >= 0 ? 'positive' : 'negative';
+                    const changeSymbol = data.change >= 0 ? '▲' : '▼';
+                    
+                    html += `
+                        <div class="stock-card">
+                            <div class="stock-ticker">
+                                ${ticker}
+                                <button onclick="removeFromWatchlist('${ticker}')" style="background: none; border: 2px solid #ff69b4; color: white; cursor: pointer; padding: 2px 8px;">✕</button>
+                            </div>
+                            <div class="stock-price">$${formatPrice(data.price)}</div>
+                            <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(data.change).toFixed(2)}%</div>
+                            <div class="pixel-bar">
+                                <div class="pixel-bar-fill" style="width: ${score.total}%"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                <span>SCORE: ${score.total.toFixed(0)}%</span>
+                                <span>VOL: ${formatDecimal(data.volatility, 1)}%</span>
+                                <span class="tooltip">TGT $${formatPrice(predictions.mostLikely)}<span class="tooltip-text">Predicted price</span></span>
+                                <button onclick="quickAnalyze('${ticker}')" style="background: none; border: 2px solid #ff69b4; color: white; cursor: pointer; padding: 2px 8px;">VIEW</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="stock-card">
+                            <div class="stock-ticker">
+                                ${ticker}
+                                <button onclick="removeFromWatchlist('${ticker}')" style="background: none; border: 2px solid #ff69b4; color: white; cursor: pointer; padding: 2px 8px;">✕</button>
+                            </div>
+                            <div class="error-message" style="font-size: 1rem;">❌ STOCK NOT FOUND</div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
+
+        function removeFromWatchlist(ticker) {
+            watchlist = watchlist.filter(t => t !== ticker);
+            displayWatchlist();
+        }
+
+        // Initialize
+        window.onload = function() {
+            displayWatchlist();
+            document.getElementById('status').textContent = '● DAY MODE';
+            // Set initial active states for gainers and compare sections
+            document.getElementById('gainers-day').classList.add('active');
+            document.getElementById('compare-day').classList.add('active');
+        };
+    </script>
+</body>
+</html>
